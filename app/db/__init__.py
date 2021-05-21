@@ -3,6 +3,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from dotenv import load_dotenv
+from flask import g
 
 load_dotenv()
 
@@ -16,3 +17,13 @@ Session = sessionmaker(bind=engine)
 
 # Base class variable helps map the models to real MySQL tables
 Base = declarative_base()
+
+def init_db():
+    Base.metadata.create_all(engine)
+
+def get_db():
+    if 'db' not in g:
+        # store db connection in app context
+        g.db = Session()
+
+    return g.db
